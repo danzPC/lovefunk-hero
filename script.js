@@ -18,7 +18,7 @@ window.addEventListener('load', () => {
   const getLayerColor = (faceColor, depthColor, index, total) => {
     const progress = total <= 1 ? 1 : index / total;
     const eased = progress * progress;
-    const faceMix = Math.round((1 - eased) * 72 + 4);
+    const faceMix = Math.round((1 - eased) * 40 + 10);
     return `color-mix(in srgb, ${faceColor} ${faceMix}%, ${depthColor})`;
   };
 
@@ -29,9 +29,9 @@ window.addEventListener('load', () => {
     if (!root || !stage || !face) return;
 
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    const safeLayers = clamp(isMobile ? 20 : 34, 2, MAX_LAYERS);
-    const safeDepth = 2.4;
-    const safeTilt = isMobile ? 16 : 7.5;
+    const safeLayers = clamp(isMobile ? 12 : 28, 2, MAX_LAYERS);
+    const safeDepth = isMobile ? 1.15 : 2.1;
+    const safeTilt = isMobile ? 7 : 7.5;
     const safeSmoothing = isMobile ? 0.06 : 0.14;
     const safeOrbitSpeed = 0.1;
     const faceColor = '#f8fafc';
