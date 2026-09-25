@@ -72,7 +72,7 @@ window.addEventListener('load', () => {
     const numberPane = document.getElementById('zip-number');
     const setSubtitle = (showingName) => {
       root.setAttribute('aria-label', showingName ? 'ALEX MADUREIRA' : '22777');
-      if (subtitle) subtitle.textContent = showingName ? 'DEPUTADO' : 'ALEX MADUREIRA · DEPUTADO';
+      if (subtitle) subtitle.textContent = 'Pelo bem de Piracicaba';
     };
 
     if (reducedMotion || !namePane || !numberPane || !swoosh) {
