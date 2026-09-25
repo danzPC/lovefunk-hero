@@ -28,39 +28,55 @@ window.addEventListener('load', () => {
     const face = stage?.querySelector('.depth-text__face');
     if (!root || !stage || !face) return;
 
-    const text = face.textContent.trim() || 'LOVE FUNK';
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const safeLayers = clamp(isMobile ? 20 : 34, 2, MAX_LAYERS);
     const safeDepth = 2.4;
     const safeTilt = isMobile ? 16 : 7.5;
     const safeSmoothing = isMobile ? 0.06 : 0.14;
-    const safeOrbitSpeed = isMobile ? 0.11 : 0.35;
+    const safeOrbitSpeed = 0.1;
     const faceColor = '#f8fafc';
-    const depthColor = '#ff0000';
+    const depthColor = '#009739';
     const baseRotation = { x: -safeTilt * 0.32, y: safeTilt * 0.42 };
 
     root.style.setProperty('--depth-text-perspective', '900px');
-    stage.querySelectorAll('.depth-text__layer').forEach((el) => el.remove());
-
-    const frag = document.createDocumentFragment();
-    for (let layerIndex = 0; layerIndex < safeLayers; layerIndex += 1) {
-      const index = safeLayers - layerIndex;
-      const layer = document.createElement('span');
-      layer.className = 'depth-text__layer';
-      layer.setAttribute('aria-hidden', 'true');
-      layer.textContent = text;
-      layer.style.color = getLayerColor(faceColor, depthColor, index, safeLayers);
-      layer.style.transform = `translateZ(${-index * safeDepth}px)`;
-      frag.appendChild(layer);
-    }
-    stage.insertBefore(frag, face);
+    const stages = root.querySelectorAll('.depth-text__stage');
+    stages.forEach((inner) => {
+      const paneFace = inner.querySelector('.depth-text__face');
+      if (!paneFace) return;
+      const label = paneFace.textContent.trim();
+      inner.querySelectorAll('.depth-text__layer').forEach((el) => el.remove());
+      const frag = document.createDocumentFragment();
+      for (let layerIndex = 0; layerIndex < safeLayers; layerIndex += 1) {
+        const index = safeLayers - layerIndex;
+        const layer = document.createElement('span');
+        layer.className = 'depth-text__layer';
+        layer.setAttribute('aria-hidden', 'true');
+        layer.textContent = label;
+        layer.style.color = getLayerColor(faceColor, depthColor, index, safeLayers);
+        layer.style.transform = `translateZ(${-index * safeDepth}px)`;
+        frag.appendChild(layer);
+      }
+      inner.insertBefore(frag, paneFace);
+    });
+    const applyTilt = (value) => {
+      stages.forEach((inner) => { inner.style.transform = value; });
+    };
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const canTrackPointer = finePointer && !reducedMotion;
 
-    if (reducedMotion) {
-      stage.style.transform = getTransform(baseRotation.x, baseRotation.y);
+    const subtitle = document.getElementById('hero-subtitle');
+    const swoosh = document.querySelector('.pl-swoosh');
+    const namePane = document.getElementById('zip-name');
+    const numberPane = document.getElementById('zip-number');
+    const setSubtitle = (showingName) => {
+      root.setAttribute('aria-label', showingName ? 'ALEX MADUREIRA' : '22777');
+      if (subtitle) subtitle.textContent = showingName ? 'DEPUTADO' : 'ALEX MADUREIRA · DEPUTADO';
+    };
+
+    if (reducedMotion || !namePane || !numberPane || !swoosh) {
+      applyTilt(getTransform(baseRotation.x, baseRotation.y));
       return;
     }
 
@@ -96,28 +112,69 @@ window.addEventListener('load', () => {
       if (!canTrackPointer || !activePointer) {
         const elapsed = (now - startTime) / 1000;
         const orbit = elapsed * safeOrbitSpeed * Math.PI * 2;
-        if (isMobile) {
-          const lookDown = Math.sin(orbit);
-          const lookSide = Math.sin(orbit - Math.PI / 2);
-          target.x = lookDown * safeTilt;
-          target.y = lookSide * safeTilt * 0.85;
-        } else {
-          const fallbackAmount = canTrackPointer ? 0.18 : 0.55;
-          target.x = baseRotation.x + Math.sin(orbit) * safeTilt * fallbackAmount;
-          target.y = baseRotation.y + Math.cos(orbit * 0.85) * safeTilt * fallbackAmount;
-        }
+        const tilt = isMobile ? safeTilt : 12;
+        const lookDown = Math.sin(orbit);
+        const lookSide = Math.sin(orbit - Math.PI / 2);
+        target.x = lookDown * tilt;
+        target.y = lookSide * tilt * 0.85;
       }
 
       current.x += (target.x - current.x) * safeSmoothing;
       current.y += (target.y - current.y) * safeSmoothing;
-      stage.style.transform = getTransform(current.x, current.y);
+      applyTilt(getTransform(current.x, current.y));
       frameId = requestAnimationFrame(tick);
     };
 
-    stage.style.transform = getTransform(current.x, current.y);
+    applyTilt(getTransform(current.x, current.y));
     frameId = requestAnimationFrame(tick);
 
-    window.addEventListener('pagehide', () => cancelAnimationFrame(frameId), { once: true });
+    let alive = true;
+    window.addEventListener('pagehide', () => {
+      alive = false;
+      cancelAnimationFrame(frameId);
+    }, { once: true });
+
+    const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+    const ZIP_MS = 1850;
+    const zipEase = 'cubic-bezier(0.45, 0.02, 0.2, 1)';
+
+    const runZip = async (from, to, logoClass) => {
+      namePane.style.visibility = 'visible';
+      numberPane.style.visibility = 'visible';
+      stage.style.setProperty('--zip', from);
+      stage.classList.add('is-zipping');
+      swoosh.classList.remove('is-go-right', 'is-go-left');
+      void swoosh.offsetWidth;
+      swoosh.classList.add(logoClass);
+      const anim = stage.animate(
+        [{ '--zip': from }, { '--zip': to }],
+        { duration: ZIP_MS, easing: zipEase, fill: 'forwards' }
+      );
+      const subtitleTimer = wait(ZIP_MS * 0.46).then(() => {
+        if (alive) setSubtitle(to === '0%');
+      });
+      await Promise.all([anim.finished.catch(() => {}), subtitleTimer]);
+      if (!alive) return;
+      if (to === '100%') namePane.style.visibility = 'hidden';
+      else numberPane.style.visibility = 'hidden';
+      stage.classList.remove('is-zipping');
+      anim.cancel();
+      swoosh.classList.remove(logoClass);
+    };
+
+    const cycleIdentity = async () => {
+      setSubtitle(true);
+      while (alive) {
+        await wait(3400);
+        if (!alive) return;
+        await runZip('0%', '100%', 'is-go-right');
+        if (!alive) return;
+        await wait(4000);
+        if (!alive) return;
+        await runZip('100%', '0%', 'is-go-left');
+      }
+    };
+    cycleIdentity();
   };
 
   if (document.readyState === 'loading') {

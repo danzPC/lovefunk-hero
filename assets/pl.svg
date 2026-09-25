@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 150" role="img" aria-label="PL">
+  <defs>
+    <linearGradient id="pl-swoosh" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#009739"/>
+      <stop offset="0.55" stop-color="#FFDF00"/>
+      <stop offset="1" stop-color="#1B4F9C"/>
+    </linearGradient>
+  </defs>
+  <path d="M18 108 C 78 132, 168 46, 304 62" fill="none" stroke="url(#pl-swoosh)" stroke-width="16" stroke-linecap="round"/>
+  <text x="34" y="92" fill="#1B4F9C" font-family="Arial Black, Impact, sans-serif" font-size="92" font-weight="900">P</text>
+  <text x="132" y="92" fill="#009739" font-family="Arial Black, Impact, sans-serif" font-size="92" font-weight="900">L</text>
+</svg>
