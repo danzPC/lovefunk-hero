@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOVE FUNK</title>
+  <meta name="description" content="O palco onde nascem os grandes sons do Brasil.">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="page-home">
+
+  <div id="preloader">
+    <div class="loader-content">
+      <img src="assets/love.png" alt="Love Funk Logo" class="loader-logo" />
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <nav class="navbar" id="mainNav">
+    <div class="nav-content">
+      <button class="menu-toggle" aria-label="Abrir menu" type="button" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <a class="nav-logo-mobile" href="#inicio" aria-label="Ir para Home">
+        <img src="assets/love.png" alt="Love Funk" />
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#inicio" onclick="closeMenu()">INÍCIO</a></li>
+        <li><a href="#inicio" onclick="closeMenu()">INSTITUCIONAL</a></li>
+        <li><a href="#inicio" onclick="closeMenu()">ARTISTAS</a></li>
+
+        <li class="nav-logo-item">
+          <img src="assets/love.png" alt="Logo Love Funk" class="mini-logo" />
+        </li>
+
+        <li><a href="#inicio" onclick="closeMenu()">PRODUTOS</a></li>
+        <li><a href="#inicio" onclick="closeMenu()">SOBRE NÓS</a></li>
+        <li><a href="#inicio" onclick="closeMenu()">CONTATO</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero" id="inicio">
+    <div class="video-background">
+      <video src="assets/MARCHI.mp4" muted playsinline id="bg-video-1" class="bg-video active"></video>
+      <video muted playsinline id="bg-video-2" class="bg-video"></video>
+      <div class="video-overlay"></div>
+    </div>
+
+    <div class="hero-content">
+      <h1 class="depth-text" id="hero-depth-text" aria-label="LOVE FUNK">
+        <span class="depth-text__stage" id="hero-depth-stage">
+          <span class="depth-text__face main-brand-text">LOVE FUNK</span>
+        </span>
+      </h1>
+      <h2 class="dynamic-subtitle">O PALCO ONDE NASCEM OS GRANDES SONS DO BRASIL.</h2>
+    </div>
+
+    <div class="scroll-indicator"><i class="fas fa-chevron-down"></i></div>
+  </header>
+
+  <script src="script.js"></script>
+</body>
+</html>
